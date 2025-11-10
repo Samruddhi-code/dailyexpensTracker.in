@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Spend - Daily Expenses Tracker</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        /* Global Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+        /* Background Illustrations */
+        .bg-illustration {
+            position: absolute;
+            opacity: 0.3;
+            pointer-events: none;
+        }
+        .wallet {
+            top: 10%;
+            left: 10%;
+            width: 150px;
+            animation: float 3s ease-in-out infinite;
+        }
+        .piggy-bank {
+            top: 20%;
+            right: 10%;
+            width: 120px;
+            animation: float 4s ease-in-out infinite reverse;
+        }
+        .person {
+            bottom: 10%;
+            left: 20%;
+            width: 180px;
+            animation: float 5s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        /* Form Container */
+        .form-container {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+        .form-container h1 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 2rem;
+            color: #a29bfe;
+            margin-bottom: 10px;
+        }
+        .welcome-text {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 20px;
+        }
+        /* Language Toggle */
+        .language-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+        .language-toggle button {
+            background: #ff9ff3;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            margin: 0 5px;
+            transition: background 0.3s;
+        }
+        .language-toggle button.active {
+            background: #a29bfe;
+            color: white;
+        }
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #555;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        input:focus {
+            border-color: #a29bfe;
+            box-shadow: 0 0 10px rgba(162, 155, 254, 0.5);
+            outline: none;
+        }
+        button[type="submit"] {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #ff9ff3, #a29bfe);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.3s;
+        }
+        button[type="submit"]:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(162, 155, 254, 0.3);
+        }
+        .toggle-form {
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+        .toggle-form a {
+            color: #a29bfe;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .toggle-form a:hover {
+            text-decoration: underline;
+        }
+        /* Responsive */
+        @media (max-width: 480px) {
+            .form-container {
+                padding: 20px;
+                margin: 20px;
+            }
+            .bg-illustration {
+                width: 80px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Illustrations -->
+    <img src="images/wallet-3d.png" alt="3D Wallet Illustration" class="bg-illustration wallet">
+    <img src="images/piggy-bank-3d.png" alt="3D Piggy Bank Illustration" class="bg-illustration piggy-bank">
+    <img src="images/person-money-3d.png" alt="3D Person Managing Money Illustration" class="bg-illustration person">
+
+    <!-- Language Toggle -->
+    <div class="language-toggle">
+        <button id="lang-en" class="active">English</button>
+        <button id="lang-mr">मराठी</button>
+    </div>
+
+    <!-- Login Form -->
+    <div class="form-container" id="login-form">
+        <h1 id="title">Welcome Back to Smart Spend!</h1>
+        <p class="welcome-text" id="welcome">Track your daily expenses effortlessly.</p>
+        <form id="auth-form">
+            <div class="form-group">
+                <label for="email" id="email-label">Email</label>
+                <input type="email" id="email" required>
+            </div>
+            <div class="form-group">
+                <label for="password" id="password-label">Password</label>
+                <input type="password" id="password" required>
+            </div>
+            <button type="submit" id="submit-btn">Login</button>
+        </form>
+        <p class="toggle-form" id="toggle-text">Don't have an account? <a href="#" id="toggle-link">Sign Up</a></p>
+    </div>
+
+    <script>
+        // Language Data
+        const translations = {
+            en: {
+                title: "Welcome Back to Smart Spend!",
+                welcome: "Track your daily expenses effortlessly.",
+                emailLabel: "Email",
+                passwordLabel: "Password",
+                submitBtn: "Login",
+                toggleText: "Don't have an account? <a href='#' id='toggle-link'>Sign Up</a>",
+                signupTitle: "Join Smart Spend!",
+                signupWelcome: "Start managing your budget today.",
+                confirmPasswordLabel: "Confirm Password",
+                signupBtn: "Sign Up",
+                signupToggle: "Already have an account? <a href='#' id='toggle-link'>Login</a>"
+            },
+            mr: {
+                title: "स्मार्ट स्पेंडमध्ये परत स्वागत!",
+                welcome: "तुमच्या दैनंदिन खर्चांचे सहज ट्रॅकिंग करा.",
+                emailLabel: "ईमेल",
+                passwordLabel: "पासवर्ड",
+                submitBtn: "लॉगिन",
+                toggleText: "खाते नाही? <a href='#' id='toggle-link'>साइन अप</a>",
+                signupTitle: "स्मार्ट स्पेंडमध्ये सामील व्हा!",
+                signupWelcome: "आजच तुमच्या बजेटचे व्यवस्थापन सुरू करा.",
+                confirmPasswordLabel: "पासवर्डची पुष्टी करा",
+                signupBtn: "साइन अप",
+                signupToggle: "आधीच खाते आहे? <a href='#' id='toggle-link'>लॉगिन</a>"
+            }
+        };
+
+        let currentLang = 'en';
+        let isLogin = true;
+
+        // Language Toggle
+        document.getElementById('lang-en').addEventListener('click', () => setLanguage('en'));
+        document.getElementById('lang-mr').addEventListener('click', () => setLanguage('mr'));
+
+        // Form Toggle (Login/Signup)
+        document.getElementById('toggle-link').addEventListener('click', (e) => {
+            e.preventDefault();
+            toggleForm();
+        });
+
+        function setLanguage(lang) {
+            currentLang = lang;
+            document.getElementById('lang-en').classList.toggle('active', lang === 'en');
+            document.getElementById('lang-mr').classList.toggle('active', lang === 'mr');
+            updateTexts();
+        }
+
+        function toggleForm() {
+            isLogin = !isLogin;
+            updateTexts();
+            // Dynamically add/remove confirm password field for signup
+            const form = document.getElementById('auth-form');
+            const confirmGroup = document.getElementById('confirm-group');
+            if (isLogin) {
+                if (confirmGroup) confirmGroup.remove();
+            } else {
+                if (!confirmGroup) {
+                    const group = document.createElement('div');
+                    group.id = 'confirm-group';
+                    group.className = 'form-group';
+                    group.innerHTML = `<label for="confirm-password" id="confirm-label">${translations[currentLang].confirmPasswordLabel}</label><input type="password" id="confirm-password" required>`;
+                    form.insertBefore(group, document.getElementById('submit-btn'));
+                }
+            }
+        }
+
+        function updateTexts() {
+            const t = translations[currentLang];
+            document.getElementById('title').textContent = isLogin ? t.title : t.signupTitle;
+            document.getElementById('welcome').textContent = isLogin ? t.welcome : t.signupWelcome;
+            document.getElementById('email-label').textContent = t.emailLabel;
+            document.getElementById('password-label').textContent = t.passwordLabel;
+            document.getElementById('submit-btn').textContent = isLogin ? t.submitBtn : t.signupBtn;
+            document.getElementById('toggle-text').innerHTML = isLogin ? t.toggleText : t.signupToggle;
+            if (!isLogin) {
+                document.getElementById('confirm-label').textContent = t.confirmPasswordLabel;
+            }
+        }
+
+        // Form Submission (Placeholder - Add real logic later)
+        document.getElementById('auth-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            alert(isLogin ? 'Login successful!' : 'Signup successful!');
+            // Redirect to dashboard or next page here
+        });
+    </script>
+</body>
+</html>
